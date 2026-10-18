@@ -1,0 +1,21 @@
+# Binary APK / XAPK artifacts
+*.apk
+*.xapk
+classes*.dex
+axml_strings.txt
+dex_analysis.json
+manifest.json
+AndroidManifest.xml
+
+# macOS / Xcode
+.DS_Store
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+build/
+Payload/
+*.ipa
+
+# Scratch scripts
+scratch/

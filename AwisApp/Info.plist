@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>ru</string>
+	<key>CFBundleDisplayName</key>
+	<string>AWIS</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>ua.novaposhta.awis</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.71</string>
+	<key>CFBundleVersion</key>
+	<string>71</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Камера необходима для сканирования штрихкодов грузов, экспресс-накладных и фотофиксации повреждений упаковки.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluetooth используется для подключения мобильных термопринтеров этикеток и POS-сканеров.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Bluetooth используется для подключения мобильных термопринтеров.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Face ID используется для быстрого входа в профиль сотрудника без ввода PIN-кода.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>ua.novaposhta.awis.oauth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mobileawis.oauth</string>
+			</array>
+		</dict>
+	</array>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>
