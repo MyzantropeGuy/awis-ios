@@ -9,11 +9,11 @@ settings:
     PRODUCT_BUNDLE_IDENTIFIER: ua.novaposhta.awis
     MARKETING_VERSION: "1.71"
     CURRENT_PROJECT_VERSION: "71"
-    SWIFT_VERSION: "5.9"
-    CODE_SIGNING_ALLOWED: "NO"
-    CODE_SIGNING_REQUIRED: "NO"
-    CODE_SIGN_IDENTITY: ""
-    CODE_SIGN_STYLE: "Manual"
+    SWIFT_VERSION: "5.0"
+    CODE_SIGNING_ALLOWED: YES
+    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
     DEVELOPMENT_TEAM: ""
 targets:
   AwisApp:
@@ -25,10 +25,9 @@ targets:
       path: AwisApp/Info.plist
     settings:
       base:
-        INFOPLIST_FILE: AwisApp/Info.plist
-        PRODUCT_NAME: AWIS
-        CODE_SIGNING_ALLOWED: "NO"
-        CODE_SIGNING_REQUIRED: "NO"
-        CODE_SIGN_IDENTITY: ""
-        CODE_SIGN_STYLE: "Manual"
+        PRODUCT_NAME: AwisApp
+        CODE_SIGNING_ALLOWED: YES
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
         DEVELOPMENT_TEAM: ""
