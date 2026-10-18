@@ -44,12 +44,13 @@ jobs:
             -project AwisApp.xcodeproj \
             -scheme AwisApp \
             -configuration Release \
-            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
             -derivedDataPath build \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_STYLE="Manual" \
+            DEVELOPMENT_TEAM="" \
             ONLY_ACTIVE_ARCH=NO
 
       - name: Package Payload into IPA
@@ -57,7 +58,11 @@ jobs:
           mkdir -p Payload
           APP_PATH=$(find build/Build/Products/Release-iphoneos -name "*.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
+            APP_PATH=$(find build/Build/Products -name "*.app" -type d | head -n 1)
+          fi
+          if [ -z "$APP_PATH" ]; then
             echo "ERROR: Could not find .app bundle in build output"
+            find build/Build/Products -maxdepth 4
             exit 1
           fi
           echo "Found compiled app at: $APP_PATH"
