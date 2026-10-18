@@ -155,7 +155,7 @@ public struct OfflineWorkplaceView: View {
                                     .cornerRadius(4)
                             }
 
-                            Text("Штрихкодов: \(op.barcodes.count) • ID: \(op.id.prefix(8))...")
+                            Text("Штрихкодов: \(op.barcodes.count) • ID: \(String(op.id.prefix(8)))...")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

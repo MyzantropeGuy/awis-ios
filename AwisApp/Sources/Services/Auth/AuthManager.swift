@@ -1,6 +1,5 @@
 import Foundation
 import Combine
-import AuthenticationServices
 
 public final class AuthManager: NSObject, ObservableObject {
     public static let shared = AuthManager()

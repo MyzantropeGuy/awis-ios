@@ -75,7 +75,7 @@ public struct DashboardView: View {
                         Text("Последние накладные")
                             .font(.headline)
 
-                        ForEach(dbManager.cachedWaybills.prefix(3)) { wb in
+                        ForEach(Array(dbManager.cachedWaybills.prefix(3))) { wb in
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(wb.number)

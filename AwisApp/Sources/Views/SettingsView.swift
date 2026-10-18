@@ -18,7 +18,7 @@ public struct SettingsView: View {
                         VStack(alignment: .leading) {
                             Text(authManager.currentUser ?? "Сотрудник")
                                 .font(.headline)
-                            Text("ID сессии: \(authManager.accessToken?.prefix(14) ?? "—")...")
+                            Text("ID сессии: \(authManager.accessToken.map { String($0.prefix(14)) } ?? "—")...")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
