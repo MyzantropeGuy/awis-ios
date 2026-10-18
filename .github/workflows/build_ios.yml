@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build Unsigned IPA
+    name: Build iOS App
     runs-on: macos-14
 
     steps:
@@ -18,7 +18,6 @@ jobs:
 
       - name: Set up Xcode
         run: |
-          # Find latest Xcode 15.x or 16.x
           if [ -d "/Applications/Xcode_16.1.app" ]; then
             sudo xcode-select -s /Applications/Xcode_16.1.app
           elif [ -d "/Applications/Xcode_16.0.app" ]; then
@@ -30,8 +29,6 @@ jobs:
           fi
           echo "Using Xcode at: $(xcode-select -p)"
           xcodebuild -version
-          echo "Available SDKs:"
-          xcodebuild -showsdks | grep iphoneos
 
       - name: Install XcodeGen
         run: |
@@ -40,21 +37,21 @@ jobs:
       - name: Generate Xcode Project
         run: |
           xcodegen generate
-          echo "=== Generated scheme list ==="
           xcodebuild -project AwisApp.xcodeproj -list
 
-      - name: Build App
+      # === SIMULATOR BUILD (for Appetize.io testing) ===
+      - name: Build for Simulator
         run: |
           xcodebuild build \
             -project AwisApp.xcodeproj \
             -scheme AwisApp \
             -configuration Release \
-            -sdk iphoneos \
-            -derivedDataPath build \
+            -sdk iphonesimulator \
+            -arch arm64 \
+            -derivedDataPath build-sim \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES \
             ONLY_ACTIVE_ARCH=NO \
             2>&1 | tee build_log.txt
 
@@ -65,24 +62,58 @@ jobs:
           name: build-log
           path: build_log.txt
 
-      - name: Package Payload into IPA
+      - name: Package Simulator App (for Appetize)
         run: |
-          mkdir -p Payload
-          APP_PATH=$(find build/Build/Products/Release-iphoneos -name "*.app" -type d | head -n 1)
-          if [ -z "$APP_PATH" ]; then
-            echo "ERROR: Could not find .app bundle in build output"
-            echo "Build output contents:"
-            find build/Build/Products -type d -maxdepth 4
+          SIM_APP=$(find build-sim/Build/Products/Release-iphonesimulator -name "*.app" -type d | head -n 1)
+          if [ -z "$SIM_APP" ]; then
+            echo "ERROR: Could not find simulator .app bundle"
+            find build-sim/Build/Products -type d -maxdepth 4
             exit 1
           fi
-          echo "Found compiled app at: $APP_PATH"
-          cp -r "$APP_PATH" Payload/
-          zip -qr AwisApp.ipa Payload/
-          echo "IPA created successfully: $(du -h AwisApp.ipa | cut -f1)"
+          echo "Found simulator app at: $SIM_APP"
+          cd "$(dirname "$SIM_APP")"
+          zip -qr "$GITHUB_WORKSPACE/AwisApp-Simulator.zip" "$(basename "$SIM_APP")"
+          echo "Simulator ZIP created: $(du -h $GITHUB_WORKSPACE/AwisApp-Simulator.zip | cut -f1)"
 
-      - name: Upload IPA Artifact
+      - name: Upload Simulator Build (Appetize.io)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AwisApp-v1.71-Simulator
+          path: AwisApp-Simulator.zip
+          retention-days: 14
+
+      # === DEVICE BUILD (for sideloading via AltStore/Sideloadly) ===
+      - name: Build for Device
+        run: |
+          xcodebuild build \
+            -project AwisApp.xcodeproj \
+            -scheme AwisApp \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build-device \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            ONLY_ACTIVE_ARCH=NO
+
+      - name: Package Device IPA (for Sideloading)
+        run: |
+          mkdir -p Payload
+          DEV_APP=$(find build-device/Build/Products/Release-iphoneos -name "*.app" -type d | head -n 1)
+          if [ -z "$DEV_APP" ]; then
+            echo "WARNING: Device build .app not found, skipping IPA"
+            exit 0
+          fi
+          echo "Found device app at: $DEV_APP"
+          cp -r "$DEV_APP" Payload/
+          zip -qr AwisApp.ipa Payload/
+          echo "IPA created: $(du -h AwisApp.ipa | cut -f1)"
+
+      - name: Upload Device IPA (Sideloading)
         uses: actions/upload-artifact@v4
         with:
           name: AwisApp-v1.71-iOS
           path: AwisApp.ipa
           retention-days: 14
+          if-no-files-found: ignore
