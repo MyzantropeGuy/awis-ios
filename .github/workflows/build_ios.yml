@@ -18,16 +18,17 @@ jobs:
 
       - name: Set up Xcode
         run: |
-          if [ -d "/Applications/Xcode_16.1.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_16.1.app
+          # Use Xcode 15.4 to avoid iOS 18.1 SDK signing restrictions
+          if [ -d "/Applications/Xcode_15.4.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_15.4.app
+          elif [ -d "/Applications/Xcode_15.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_15.app
           elif [ -d "/Applications/Xcode_16.0.app" ]; then
             sudo xcode-select -s /Applications/Xcode_16.0.app
           elif [ -d "/Applications/Xcode_16.app" ]; then
             sudo xcode-select -s /Applications/Xcode_16.app
-          elif [ -d "/Applications/Xcode_15.4.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_15.4.app
           fi
-          echo "Using Xcode at: $(xcode-select -p)"
+          echo "Selected Xcode: $(xcode-select -p)"
           xcodebuild -version
 
       - name: Install XcodeGen
@@ -39,7 +40,7 @@ jobs:
           xcodegen generate
           xcodebuild -project AwisApp.xcodeproj -list
 
-      - name: Build App (Ad-Hoc Signed)
+      - name: Build App (Unsigned)
         run: |
           xcodebuild build \
             -project AwisApp.xcodeproj \
@@ -47,9 +48,12 @@ jobs:
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -derivedDataPath build \
-            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
+            CODE_SIGN_STYLE="Manual" \
+            DEVELOPMENT_TEAM="" \
             ONLY_ACTIVE_ARCH=NO
 
       - name: Package Payload into IPA
