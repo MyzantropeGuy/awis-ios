@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import AudioToolbox
 
 public struct BarcodeScannerView: UIViewControllerRepresentable {
     public let onBarcodeScanned: (String) -> Void

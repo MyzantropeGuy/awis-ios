@@ -35,27 +35,29 @@ jobs:
         run: |
           xcodegen generate
 
-      - name: Build Archive (Unsigned)
+      - name: Build App (Ad-Hoc Signed)
         run: |
-          xcodebuild archive \
+          xcodebuild build \
             -project AwisApp.xcodeproj \
             -scheme AwisApp \
             -configuration Release \
             -destination 'generic/platform=iOS' \
-            -archivePath build/AwisApp.xcarchive \
-            CODE_SIGNING_ALLOWED=NO \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY=""
+            CODE_SIGNING_ALLOWED=YES
 
       - name: Package Payload into IPA
         run: |
-          mkdir -p build/Payload
-          cp -r build/AwisApp.xcarchive/Products/Applications/AwisApp.app build/Payload/
-          cd build && zip -qr AwisApp.ipa Payload/
+          mkdir -p Payload
+          APP_PATH=$(find build/Build/Products -name "AwisApp.app" | head -n 1)
+          echo "Found compiled app at: $APP_PATH"
+          cp -r "$APP_PATH" Payload/
+          zip -qr AwisApp.ipa Payload/
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AwisApp-v1.71-iOS
-          path: build/AwisApp.ipa
+          path: AwisApp.ipa
           retention-days: 14
